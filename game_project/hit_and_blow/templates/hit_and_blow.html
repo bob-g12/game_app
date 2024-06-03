@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Hit & Blow</title>
+
+    <script>
+        const correct_list = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+        correct_list.sort(() => Math.random() - 0.5);
+        const correct_number = correct_list.slice(0, 4);
+        /*必要な分の要素のみをランダムで抽出する関数
+            const randomSelect  = (correct_list, num) => {
+                let select_list = [];
+    
+                while(select_list.length < num && correct_list.length > 0)
+                {
+                    // 配列からランダムな要素を選ぶ
+                    const rand_num = Math.floor(Math.random() * correct_list.length);
+                    // 選んだ要素を別の配列に登録する
+                    select_list.push(correct_list[rand_num]);
+                    // もとの配列からは削除する
+                    correct_list.splice(rand_num, 1);
+                }
+                
+                return select_list;
+            };
+            const selected = randomSelect(correct_list.slice(), 4);
+        */
+        let try_count = 0;
+
+        const judge = () => {
+            const input_answer = document.getElementById("input_answer");
+            if (input_validation(input_answer)) {
+                return;
+            };
+
+            try_count++;
+            let hit = 0;
+            let blow = 0;
+            const answer_number = String(
+                input_answer.value
+            );
+            for (let i = 0; i < 4; i++) {
+                if (answer_number[i] === correct_number[i]) {
+                    hit++;
+                } else if (answer_number.includes(correct_number[i])) {
+                    blow++;
+                }
+            };
+
+            display(hit, blow);
+        }
+
+        const input_validation = (input_answer) => {
+            if (input_answer.value === ""){
+                alert("回答を入力してください");
+                return true;
+            };
+            if (isNaN(input_answer.value)){
+                alert("半角数字を入力してください");
+                return true;
+            };
+            return false;
+        }
+
+        const display = (hit, blow, correct_number) => {
+            const count_display = document.getElementById("count");
+            count_display.textContent = try_count;
+
+            const result_display = document.getElementById("result");
+            if (hit === 4){
+                result_display.textContent = "4 Hit! congratulations!";
+                const button = document.getElementById("input_button");
+                button.style.visibility = "hidden";
+            } else if (hit === 0 && blow === 0 ){
+                result_display.textContent = "No hit no blow";
+            } else {
+                result_display.textContent = `${hit}Hit! ${blow}Blow`;
+            }
+            return;
+        }
+    </script>
+    <style type="text/css">
+        #input_answer {
+            width: 200px;
+            height: 2em;
+        }
+        #input_button {
+            height: 2.5em;
+        }
+        span {
+            font-size: 1.5em;
+            margin: 30px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hit & Blow</h1>
+    <form onsubmit="return false" >
+        <label><strong>回答:</strong>
+            <input type="text" id="input_answer" maxlength="4" pattern="^[1-9]+$"
+            placeholder="半角で数値を入力してください" required>
+        </label>
+        <button type="button" id="input_button" onclick="judge()">決定</button>
+    </form>
+    <p>
+        <strong>結果:<span id="result"></span></strong>
+    </p>
+    <p>
+        <strong>試行回数:<span id="count"></span>
+    </p>
+    <hr>
+    <h2>ルール</h2>
+    <h3>クリア条件</h3>
+    <p><strong>4 桁すべて一致する数字を入力すると 4 Hit でクリアになります。</strong></p>
+    <h3>遊び方</h3>
+    <ul>
+        <li>答えは 1 ～ 9 までの数字のランダムで 4 桁決まります。
+        <br>※同じ数字は出ませんが入力は可能です。</li>
+        <li>Hit は同じ数字が同じ桁数にある場合 1 カウントされます。</li>
+        <li>Blow は違う桁数に同じ数字があれば 1 カウントされます。</li>
+        <li>入力結果の Hit や Blow の値から、クリアを目指してください。</li>
+        <li>クリア時に試行回数が表示されるので最短クリアを目指してみてください。</li>
+        <li>入力は半角数字で行ってください、全角での入力はできません。</li>
+        <li>ロードすると答えが変わり試行回数もリセットされます。</li>
+    </ul>
+    <hr>
+</body>
+</html>
